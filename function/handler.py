@@ -169,23 +169,10 @@ def run_inference_on_image(image):
 
 def maybe_download_and_extract():
   """Download and extract model tar file."""
-  dest_directory = FLAGS.model_dir
-  if not os.path.exists(dest_directory):
-    os.makedirs(dest_directory)
-  filename = DATA_URL.split('/')[-1]
-  filepath = os.path.join(dest_directory, filename)
-  if not os.path.exists(filepath):
-    def _progress(count, block_size, total_size):
-      sys.stdout.write('\r>> Downloading %s %.1f%%' % (
-          filename, float(count * block_size) / float(total_size) * 100.0))
-      sys.stdout.flush()
-    filepath, _ = urllib.request.urlretrieve(DATA_URL, filepath, _progress)
-    print()
-    statinfo = os.stat(filepath)
-    print('Successfully downloaded', filename, statinfo.st_size, 'bytes.')
-  tarfile.open(filepath, 'r:gz').extractall(dest_directory)
+  filepath = maybe_download_url(DATA_URL, FLAGS.model_dir)
+  tarfile.open(filepath, 'r:gz').extractall(FLAGS.model_dir)
 
-def download_url(url, dest_directory):
+def maybe_download_url(url, dest_directory):
   print('Downloading ', url, 'under ', dest_directory)
 
   if not os.path.exists(dest_directory):
@@ -210,13 +197,13 @@ def main(_):
   run_inference_on_image(image)
 
 def handle(req):
-  print("Handle this -> " + req)
+  #print("Handle this -> " + req)
   if req.find("http") == -1:
     print("Give me a URL of a picture and I'll recognize it for you.")
     return
 
-  print("Downloading ", req)
-  FLAGS.image_file = download_url(req, '/root/images')
+  #print("Downloading ", req)
+  FLAGS.image_file = maybe_download_url(req, '/root/images')
   tf.app.run(main=main, argv=[sys.argv[0]] + unparsed)
 
 parser = argparse.ArgumentParser()

@@ -1,6 +1,11 @@
 FROM tensorflow/tensorflow
 
 ADD https://github.com/alexellis/faas/releases/download/0.5.5-alpha/fwatchdog /usr/bin
+ADD http://download.tensorflow.org/models/image/imagenet/inception-2015-12-05.tgz /tmp/
+
+RUN mkdir /tmp/imagenet
+RUN tar -xvf /tmp/inception-2015-12-05.tgz -C /tmp/imagenet/
+RUN mv /tmp/inception-2015-12-05.tgz /tmp/imagenet/inception-2015-12-05.tgz
 RUN chmod +x /usr/bin/fwatchdog
 
 WORKDIR /root/

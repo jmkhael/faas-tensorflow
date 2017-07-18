@@ -185,15 +185,38 @@ def maybe_download_and_extract():
     print('Successfully downloaded', filename, statinfo.st_size, 'bytes.')
   tarfile.open(filepath, 'r:gz').extractall(dest_directory)
 
+def download_url(url, dest_directory):
+  print('Downloading ', url, 'under ', dest_directory)
+
+  if not os.path.exists(dest_directory):
+    os.makedirs(dest_directory)
+  filename = url.split('/')[-1]
+  filepath = os.path.join(dest_directory, filename)
+  if not os.path.exists(filepath):
+    def _progress(count, block_size, total_size):
+      sys.stdout.write('\r>> Downloading %s %.1f%%' % (
+          filename, float(count * block_size) / float(total_size) * 100.0))
+      sys.stdout.flush()
+    filepath, _ = urllib.request.urlretrieve(url, filepath, _progress)
+    print()
+    statinfo = os.stat(filepath)
+    print('Successfully downloaded', filename, statinfo.st_size, 'bytes.')
+
+  return filepath
 
 def main(_):
   maybe_download_and_extract()
-  image = (FLAGS.image_file if FLAGS.image_file else
-           '/root/images/elephant.jpg')
+  image = FLAGS.image_file
   run_inference_on_image(image)
 
+def handle(req):
+  print("Handle this -> " + req)
+  if req.find("http") == -1:
+    print("Give me a URL of a picture and I'll recognize it for you.")
+    return
 
-def handle(q):
+  print("Downloading ", req)
+  FLAGS.image_file = download_url(req, '/root/images')
   tf.app.run(main=main, argv=[sys.argv[0]] + unparsed)
 
 parser = argparse.ArgumentParser()
@@ -216,7 +239,7 @@ parser.add_argument(
 parser.add_argument(
     '--image_file',
     type=str,
-    default='',
+    default='/root/images/elephant.jpg',
     help='Absolute path to image file.'
 )
 parser.add_argument(

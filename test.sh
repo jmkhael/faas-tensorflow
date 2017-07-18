@@ -9,7 +9,7 @@ if [ -n "$1" ]; then
     image_url=$1
 fi
 
-for index in {1..100..10}; do
+for index in {0..100..10}; do
   url=https://unsplash.it/200/300?image=$index
   echo checking $url...
   curl $FAAS_TENSORFLOW -d $url

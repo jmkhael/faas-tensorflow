@@ -1,0 +1,36 @@
+version: "3"
+services:
+
+# Core API services are pinned, HA is provided for functions.
+    gateway:
+        volumes:
+            - "/var/run/docker.sock:/var/run/docker.sock"
+        ports:
+            - 8080:8080
+        image: functions/gateway:0.5.6
+        networks:
+            - functions
+        environment:
+            dnsrr: "true"  # Temporarily use dnsrr in place of VIP while issue persists on PWD
+        deploy:
+            placement:
+                constraints: [node.role == manager]
+
+    # Node.js gives OS info about the node (Host)
+    tensorflow:
+        image: jmkhael/faas-tensorflow:latest
+        labels:
+            function: "true"
+        depends_on:
+            - gateway
+        networks:
+            - functions
+        environment:
+            no_proxy: "gateway"
+            https_proxy: $https_proxy
+
+networks:
+    functions:
+        driver: overlay
+        # Docker does not support this option yet - maybe create outside of the stack and reference as "external"?
+        #attachable: true

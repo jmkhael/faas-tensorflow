@@ -7,4 +7,4 @@ functions:
   tensorflow:
     lang: python
     handler: ./sample/tensorflow
-    image: jmkhael/faas-tensorflow
+    image: jmkhael/faas-tensorflow:1.0

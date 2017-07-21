@@ -173,18 +173,19 @@ def maybe_download_and_extract():
   tarfile.open(filepath, 'r:gz').extractall(FLAGS.model_dir)
 
 def maybe_download_url(url, dest_directory):
-  print('Downloading ', url, 'under ', dest_directory)
-
   if not os.path.exists(dest_directory):
     os.makedirs(dest_directory)
   filename = url.split('/')[-1]
   filepath = os.path.join(dest_directory, filename)
   if not os.path.exists(filepath):
-    def _progress(count, block_size, total_size):
-      sys.stdout.write('\r>> Downloading %s %.1f%%' % (
-          filename, float(count * block_size) / float(total_size) * 100.0))
-      sys.stdout.flush()
-    filepath, _ = urllib.request.urlretrieve(url, filepath, _progress)
+    print('Downloading ', url, 'under ', dest_directory)
+
+    #def _progress(count, block_size, total_size):
+    #  sys.stdout.write('\r>> Downloading %s %.1f%%' % (
+    #      filename, float(count * block_size) / float(total_size) * 100.0))
+    #  sys.stdout.flush()
+    #filepath, _ = urllib.request.urlretrieve(url, filepath, _progress)
+    filepath, _ = urllib.request.urlretrieve(url, filepath)
     print()
     statinfo = os.stat(filepath)
     print('Successfully downloaded', filename, statinfo.st_size, 'bytes.')

@@ -4,7 +4,7 @@ There is an accompanying blog post here: http://jmkhael.io/kittens-vs-tarsiers-a
 
 > Make sure to give it a read!
 
-## TLDR;
+## Demo
 [![Try in PWD](https://cdn.rawgit.com/play-with-docker/stacks/cff22438/assets/images/button.png)](http://play-with-docker.com/?stack=https://raw.githubusercontent.com/jmkhael/faas-tensorflow/master/docker-compose.yml&stack_name=func)
 
 wait a while until the Tensorflow Docker image extract. Be patient...

@@ -40,6 +40,7 @@ import os.path
 import re
 import sys
 import tarfile
+import json
 
 import numpy as np
 from six.moves import urllib
@@ -160,11 +161,25 @@ def run_inference_on_image(image):
     # Creates node ID --> English string lookup.
     node_lookup = NodeLookup()
 
+    top_predicted_items = []
+    result = {
+        "url": FLAGS.image_url
+    }
+
     top_k = predictions.argsort()[-FLAGS.num_top_predictions:][::-1]
     for node_id in top_k:
       human_string = node_lookup.id_to_string(node_id)
       score = predictions[node_id]
-      print('%s (score = %.5f)' % (human_string, score))
+      #print('%s (score = %.5f)' % (human_string, score))
+
+      top_predicted_items.append({
+        "node_id": str(node_id),
+        "human_string": human_string,
+        "score": round(float(score), 4)
+      })
+
+    result["predictions"] = top_predicted_items
+    print(json.dumps(result))
 
 
 def maybe_download_and_extract():
@@ -178,7 +193,7 @@ def maybe_download_url(url, dest_directory):
   filename = url.split('/')[-1]
   filepath = os.path.join(dest_directory, filename)
   if not os.path.exists(filepath):
-    print('Downloading ', url, 'under ', dest_directory)
+    #print('Downloading ', url, 'under ', dest_directory)
 
     #def _progress(count, block_size, total_size):
     #  sys.stdout.write('\r>> Downloading %s %.1f%%' % (
@@ -188,7 +203,7 @@ def maybe_download_url(url, dest_directory):
     filepath, _ = urllib.request.urlretrieve(url, filepath)
     print()
     statinfo = os.stat(filepath)
-    print('Successfully downloaded', filename, statinfo.st_size, 'bytes.')
+    #print('Successfully downloaded', filename, statinfo.st_size, 'bytes.')
 
   return filepath
 
@@ -204,6 +219,7 @@ def handle(req):
     return
 
   #print("Downloading ", req)
+  FLAGS.image_url = req
   FLAGS.image_file = maybe_download_url(req, '/root/images')
   tf.app.run(main=main, argv=[sys.argv[0]] + unparsed)
 

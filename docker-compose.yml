@@ -20,7 +20,7 @@ services:
 
     # Node.js gives OS info about the node (Host)
     tensorflow:
-        image: jmkhael/faas-tensorflow:1.0
+        image: jmkhael/faas-tensorflow:latest
         labels:
             function: "true"
         depends_on:

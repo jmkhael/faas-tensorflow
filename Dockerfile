@@ -1,6 +1,6 @@
 FROM tensorflow/tensorflow
 
-ADD https://github.com/alexellis/faas/releases/download/0.5.5-alpha/fwatchdog /usr/bin
+ADD fwatchdog /usr/bin
 ADD http://download.tensorflow.org/models/image/imagenet/inception-2015-12-05.tgz /tmp/
 
 RUN mkdir /tmp/imagenet
@@ -25,6 +25,7 @@ RUN pip install -r requirements.txt
 
 WORKDIR /root/
 
+ENV fast_fork=1
 ENV fprocess="python index.py"
 
 HEALTHCHECK --interval=1s CMD [ -e /tmp/.lock ] || exit 1

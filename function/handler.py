@@ -179,8 +179,7 @@ def run_inference_on_image(image):
       })
 
     result["predictions"] = top_predicted_items
-    print(json.dumps(result))
-
+    return json.dumps(result)
 
 def maybe_download_and_extract():
   """Download and extract model tar file."""
@@ -201,7 +200,7 @@ def maybe_download_url(url, dest_directory):
     #  sys.stdout.flush()
     #filepath, _ = urllib.request.urlretrieve(url, filepath, _progress)
     filepath, _ = urllib.request.urlretrieve(url, filepath)
-    print()
+    #print()
     statinfo = os.stat(filepath)
     #print('Successfully downloaded', filename, statinfo.st_size, 'bytes.')
 
@@ -210,7 +209,7 @@ def maybe_download_url(url, dest_directory):
 def main(_):
   maybe_download_and_extract()
   image = FLAGS.image_file
-  run_inference_on_image(image)
+  return run_inference_on_image(image)
 
 def handle(req):
   #print("Handle this -> " + req)
@@ -221,7 +220,7 @@ def handle(req):
   #print("Downloading ", req)
   FLAGS.image_url = req
   FLAGS.image_file = maybe_download_url(req, '/root/images')
-  tf.app.run(main=main, argv=[sys.argv[0]] + unparsed)
+  return tf.app.run(main=main, argv=[sys.argv[0]] + unparsed)
 
 parser = argparse.ArgumentParser()
 # classify_image_graph_def.pb:
